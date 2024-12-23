@@ -1,0 +1,52 @@
+DELAY 1000
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 500
+STRING powershell -Command "Start-Process cmd -Verb RunAs"
+ENTER
+DELAY 2000
+ALT y
+DELAY 500
+STRING echo --- Démarrage du processus de réparation ---
+ENTER
+
+REM ### 1. Réparation des fichiers système
+STRING sfc /scannow
+ENTER
+DELAY 2000
+
+REM ### 2. Vérification et réparation du disque
+STRING chkdsk C: /f /r /x
+ENTER
+DELAY 2000
+
+REM ### 3. Réparation de l’image système Windows
+STRING DISM /Online /Cleanup-Image /CheckHealth
+ENTER
+DELAY 2000
+STRING DISM /Online /Cleanup-Image /ScanHealth
+ENTER
+DELAY 2000
+STRING DISM /Online /Cleanup-Image /RestoreHealth
+ENTER
+DELAY 3000
+
+REM ### 4. Réinitialisation des paramètres réseau
+STRING netsh int ip reset
+ENTER
+STRING netsh winsock reset
+ENTER
+DELAY 2000
+
+REM ### 5. Vérification des erreurs de RAM
+STRING mdsched.exe
+ENTER
+DELAY 1000
+ALT y
+DELAY 500
+
+REM ### 6. Redémarrage pour appliquer les réparations
+STRING shutdown /r /t 0
+ENTER
